@@ -1,61 +1,79 @@
-  <svelte:head>
+<svelte:head>
 	<!-- head content -->
 	<script src="https://cdn.tiny.cloud/1/q7h0i8r0h7ha598lyeh91pwubnpq34dseiz76p98qmzol7dc/tinymce/6/tinymce.min.js" referrerpolicy="origin" on:load={tinymceloaded}></script>
-  </svelte:head>
-{percentage}
-  <textarea>
-    Welcome to TinyMCE!
-  </textarea>
-  <script>
+	
+</svelte:head>
+
+{body}
+<form on:submit|preventDefault={handleSubmit}>
+	<input type="text" bind:value={title}/>
+		<br/>
+	<textarea bind:value={body}></textarea>
+	<br/>
+	<input type="submit" value="save">
+</form>
+  
+  
+
+<script>
 // @ts-nocheck
 
 	// import firebase from "firebase/app";
 	import {db, storage} from "$lib/firebase"
 	import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-	// const storageRef = ref(storage, 'some-child');
+	import { collection, doc, setDoc } from "firebase/firestore";
+	// import Counter from "../Counter.svelte";
 
-	// // 'file' comes from the Blob or File API
-	// uploadBytes(storageRef, file).then((snapshot) => {
-	// 	console.log('Uploaded a blob or file!');
-	// });
+	let body=`test`;
+	let title;
+	let photos = [];
+	// let percentage = 0;
 
-	let url = null;
-	let percentage = 0;
+	async function handleSubmit() {
+		let html_text = extractContent(body);
+		// Add a new document with a generated id
+		const newArticleRef = doc(collection(db, "article"));
 
-	const uploadFile = async (pic) => {
+		// later...
+		const data = {
+			author:'cIWHsCZgkVM9hu0snc9mM2qGpe93',
+			title,
+			body,
+			photos,
+			text:html_text
+		}
+		// console.log(data)
+		await setDoc(newArticleRef, data);
+				
+		// const docRef = await addDoc(collection("article"), );
+		console.log("Document written with ID: ", data);
+	}
+
+
+
+	const uploadFile = (pic, progress) => new Promise((resolve, reject)=>{
 		// pic = e.target.file[0];
 		const file = pic.blob()
+		// console.log(pic)
 		const storageRef = ref(storage, `${Date.now()}/${pic.filename()}`);
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
-
-		// const mainPicturePath = `/${Date.now()}/${Date.now()}-${pic.filename()}`;
-		// const storage = getStorage();
-		// const ref = storage.ref(mainPicturePath);
-		// await ref.put(pic.blob());
-		// return mainPicturePath;
-
 		uploadTask.on("state_changed",
 		(snapshot) => {
-			const progress =
-			Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-			percentage = progress
+			progress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
 		},
 		(error) => {
-			alert(error);
+			reject("failed to upload");
 		},
 		() => {
 			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-				url = downloadURL;
+				// console.log(downloadURL)
+				photos.push(downloadURL+'')
+				resolve(downloadURL);
 			});
 		}
 		);
-	};
-
-	export const getUrl = async (path) => {
-		const storage = storage();
-		return await storage.ref(path).getDownloadURL();
-	};
+	});
 
 
 
@@ -68,7 +86,7 @@
 	function tinymceloaded(){
 		window.tinymce.init({
 			selector: 'textarea',
-			images_upload_handler: image_upload_handler,
+			images_upload_handler: uploadFile,
 			plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect',
 			toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
 			tinycomments_mode: 'embedded',
@@ -79,19 +97,6 @@
 			],
 		});
 	}
-
-
-
-	async function image_upload_handler (blobInfo, success, failure, progress) {
-		const path = await uploadFile(blobInfo);
-		if (url) {
-			// const url = await getUrl(path);
-			success(url);
-		} else {
-			failure('failed to upload the image')
-		}
-
-	};
 
 
 
