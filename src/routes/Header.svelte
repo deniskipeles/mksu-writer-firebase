@@ -57,7 +57,7 @@
 		</a>
 	</div>
 </header>
-{JSON.stringify(userData)}
+{userData ? userData.email : "login"}
 
 <style>
 	header {

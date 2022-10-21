@@ -1,6 +1,7 @@
 
 <script>
   export let articles;
+  let alt = "https://picsum.photos/500/300/?image=10"
 </script>
 
 
@@ -13,10 +14,10 @@
        <!-- content here -->
        <li class="cards_item">
          <div class="card">
-           <div class="card_image"><img src="https://picsum.photos/500/300/?image=10"></div>
+           <div class="card_image"><img alt={article.title} src={article.photos ? article.photos[0] : "https://picsum.photos/500/300/?image=10"}></div>
            <div class="card_content">
              <h2 class="card_title">{article.title}</h2>
-             <p class="card_text">{article.body}</p>
+             <p class="card_text">{article.text}</p>
              <button class="btn card_btn">Read More</button>
            </div>
          </div>

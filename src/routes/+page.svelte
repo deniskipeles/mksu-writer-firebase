@@ -2,7 +2,7 @@
 	import Counter from './Counter.svelte';
 	import ListArticles from '$lib/comp/ListArticles.svelte';
 	import {app,db} from '$lib/firebase.js';
-	import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+	import { getFirestore, collection, getDocs } from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
 	let articles = [];
