@@ -43,7 +43,7 @@
 				<a href="/about">Topping</a>
 			</li>
 			<li class:active={$page.url.pathname.startsWith('/my-articles')}>
-				<a href="/sverdle">My Articles</a>
+				<a href="/my-articles">My Articles</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
