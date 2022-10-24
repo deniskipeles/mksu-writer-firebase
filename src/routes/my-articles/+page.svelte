@@ -8,15 +8,16 @@
 	
 
 	// const querySnapshot = await getDocs(q);
-	let userData,id=null;
+	let userData;
 
 	const auth = getAuth();
-	onAuthStateChanged(auth, (user) => {
+	onAuthStateChanged(auth, async(user) => {
 	if (user) {
 		// User is signed in, see docs for a list of available properties
 		// https://firebase.google.com/docs/reference/js/firebase.User
-		id = user.uid;
+		const id = user.uid;
 		userData = user;
+		await getArticles(id)
 		// ...
 	} else {
 		// User is signed out
@@ -27,12 +28,13 @@
 
 	let articles = [];
 
-	async function getArticles() {
+	async function getArticles(id) {
+
 		// const articlesCol = collection(db, 'article');
 		const q = query(collection(db, "article"), where("author", "==", id));
 		const articleSnapshot = await getDocs(q);
-		// console.log(articleSnapshot)
-		const articleList = articleSnapshot.map(doc => {
+		// console.log(id)
+		const articleList = articleSnapshot.docs.map(doc => {
 			const data=doc.data()
 			return{
 				...data,
@@ -43,11 +45,9 @@
 		// console.log(articleSnapshot)
 	}
 
-	onMount(async () => {
-		if(id){
-			await getArticles()
-		}
-	});
+	const refetch = async () => {
+		await getArticles(userData.uid)
+	};
 </script>
 
 
@@ -55,7 +55,7 @@
 	<title>My Articles</title>
 	<meta name="description" content="This is a list the articles that I have publish" />
 </svelte:head>
-	<ListArticles articles={articles} />
+	<ListArticles articles={articles} refetch={refetch} />
 	<!-- <Counter /> -->
 <style>
 	section {

@@ -3,12 +3,13 @@
   import { doc, deleteDoc } from "firebase/firestore";
   import {db} from '$lib/firebase.js';
 
-
   export let articles;
+  export let refetch;
   let alt = "https://picsum.photos/500/300/?image=10"
 
   const deleteDocument = async(document) => {
     await deleteDoc(doc(db, "article", document));
+    refetch()
   }
   
 </script>

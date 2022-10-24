@@ -65,6 +65,8 @@
 
   <script>
 	import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+	import { goto } from '$app/navigation';
+
 	let email='';
 	let password='';
 	let user=null;
@@ -75,7 +77,7 @@
 		.then((userCredential) => {
 			// Signed in 
 			user = userCredential.user;
-			// console.log(user)
+			goto(`/`, { replaceState:true }) 
 			// ...
 		})
 		.catch((error) => {

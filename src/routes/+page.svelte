@@ -18,7 +18,7 @@
 			}
 	});
 		articles = articleList
-		console.log(articles)
+		// console.log(articles)
 	}
 
 	onMount(async () => {

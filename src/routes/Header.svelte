@@ -4,7 +4,8 @@
 	import { page } from '$app/stores';
 	import logo from '$lib/images/svelte-logo.svg';
 	import github from '$lib/images/github.svg';
-	import { getAuth, onAuthStateChanged } from "firebase/auth";
+	import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+	import { goto } from '$app/navigation';
 
 	let userData;
 
@@ -22,6 +23,14 @@
 		userData = null;
 	}
 	});
+
+	const logout = () => {
+		signOut(auth).then(() => {
+			goto(`/`, { replaceState:true })
+		}).catch((error) => {
+			// An error happened.
+		});
+	}
 </script>
 
 <header>
@@ -39,9 +48,11 @@
 			<li class:active={$page.url.pathname === '/'}>
 				<a href="/">Home</a>
 			</li>
-			<li class:active={$page.url.pathname === '/about'}>
-				<a href="/about">Topping</a>
+			{#if userData != null}
+			<li class:active={$page.url.pathname === '/create-article'}>
+				<a href="/create-article">create article</a>
 			</li>
+			{/if}
 			<li class:active={$page.url.pathname.startsWith('/my-articles')}>
 				<a href="/my-articles">My Articles</a>
 			</li>
@@ -51,13 +62,21 @@
 		</svg>
 	</nav>
 
-	<div class="corner">
-		<a href="/login">
-			<img src={github} alt="GitHub" />
-		</a>
-	</div>
+	{#if userData == null}
+		<div class="corner">
+			<a href="/login">
+				login
+			</a>
+		</div>
+	{:else}
+		<div class="corner">
+			<p on:click={logout}>
+				logout 
+			</p>
+		</div>
+	{/if}
 </header>
-{userData ? userData.email : `login`}
+		{userData ? userData.email : null}
 
 <style>
 	header {

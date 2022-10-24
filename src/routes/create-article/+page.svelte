@@ -91,7 +91,28 @@
 	import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 	import { collection, doc, setDoc } from "firebase/firestore";
 	// import Counter from "../Counter.svelte";
-	 import Editor from '@tinymce/tinymce-svelte';
+	import Editor from '@tinymce/tinymce-svelte';
+	import { getAuth, onAuthStateChanged } from "firebase/auth";
+	import { goto } from '$app/navigation';
+	
+
+	// const querySnapshot = await getDocs(q);
+	let userData,id=null;
+
+	const auth = getAuth();
+	onAuthStateChanged(auth, async(user) => {
+	if (user) {
+		// User is signed in, see docs for a list of available properties
+		// https://firebase.google.com/docs/reference/js/firebase.User
+		id = user.uid;
+		userData = user;
+		// ...
+	} else {
+		// User is signed out
+		// ...
+		userData = null;
+	}
+	});
 
  	let apiKey = "q7h0i8r0h7ha598lyeh91pwubnpq34dseiz76p98qmzol7dc";
 
@@ -169,23 +190,25 @@
 
 	async function handleSubmit() {
 		getImageSrc()
-		let html_text = extractContent(body);
+		const html_text = extractContent(body);
+		const text = html_text.substring(0,300);
 		// Add a new document with a generated id
 		const newArticleRef = doc(collection(db, "article"));
 
 		// later...
 		const data = {
-			author:'cIWHsCZgkVM9hu0snc9mM2qGpe93',
+			author:id,
 			title,
 			body,
 			photos,
-			text:html_text
+			text
 		}
-		console.log(data)
-		await setDoc(newArticleRef, data);
+		// console.log(data)
+		const res = await setDoc(newArticleRef, data);
 				
 		// const docRef = await addDoc(collection("article"), );
-		console.log("Document written with ID: ", data);
+		// console.log(newArticleRef.id)
+		goto(`/article/${newArticleRef.id}`, { replaceState:true })
 	}
 
 
