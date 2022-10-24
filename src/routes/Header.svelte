@@ -42,7 +42,7 @@
 			<li class:active={$page.url.pathname === '/about'}>
 				<a href="/about">Topping</a>
 			</li>
-			<li class:active={$page.url.pathname.startsWith('/sverdle')}>
+			<li class:active={$page.url.pathname.startsWith('/my-articles')}>
 				<a href="/sverdle">My Articles</a>
 			</li>
 		</ul>
@@ -57,7 +57,7 @@
 		</a>
 	</div>
 </header>
-{userData ? userData.email : "login"}
+{userData ? userData.email : `login`}
 
 <style>
 	header {

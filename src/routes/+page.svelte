@@ -10,8 +10,15 @@
 	async function getArticles() {
 		const articlesCol = collection(db, 'article');
 		const articleSnapshot = await getDocs(articlesCol);
-		const articleList = articleSnapshot.docs.map(doc => doc.data());
+		const articleList = articleSnapshot.docs.map(doc => {
+			const data=doc.data()
+			return{
+				...data,
+				id:doc.id
+			}
+	});
 		articles = articleList
+		console.log(articles)
 	}
 
 	onMount(async () => {

@@ -1,7 +1,15 @@
 
 <script>
+  import { doc, deleteDoc } from "firebase/firestore";
+  import {db} from '$lib/firebase.js';
+
+
   export let articles;
   let alt = "https://picsum.photos/500/300/?image=10"
+
+  const deleteDocument = async(document) => {
+    await deleteDoc(doc(db, "article", document));
+  }
   
 </script>
 
@@ -20,6 +28,7 @@
              <h2 class="card_title">{article.title}</h2>
              <p class="card_text">{article.text}</p>
              <a href={`/article/${article.id}`}><button class="btn card_btn">Read More</button></a>
+             <button on:click={async()=> await deleteDocument(article.id)} class="btn card_btn">Delete</button>
            </div>
          </div>
        </li>
