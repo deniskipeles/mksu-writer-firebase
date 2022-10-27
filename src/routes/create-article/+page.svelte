@@ -52,7 +52,7 @@
 	
 	<form class="form-inline" on:submit|preventDefault={handleSubmit}>
 	  <label for="title">Title:</label>
-	  <input bind:value={title} type="text" id="title" placeholder="Enter title" name="title">
+	  <input bind:value={title} type="text" id="title" placeholder="Enter title" name="title" required>
 	  <br/>
 	  <Editor
 	   {apiKey}

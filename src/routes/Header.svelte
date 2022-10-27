@@ -3,7 +3,6 @@
 
 	import { page } from '$app/stores';
 	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
 	import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 	import { goto } from '$app/navigation';
 

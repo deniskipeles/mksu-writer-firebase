@@ -1,29 +1,13 @@
 <script>
-	import Counter from './Counter.svelte';
 	import ListArticles from '$lib/comp/ListArticles.svelte';
-	import {app,db} from '$lib/firebase.js';
-	import { getFirestore, collection, getDocs } from 'firebase/firestore';
-	import { onMount } from 'svelte';
+    import Paginate from '$lib/comp/Paginate.svelte';
 
-	let articles = [];
 
-	async function getArticles() {
-		const articlesCol = collection(db, 'article');
-		const articleSnapshot = await getDocs(articlesCol);
-		const articleList = articleSnapshot.docs.map(doc => {
-			const data=doc.data()
-			return{
-				...data,
-				id:doc.id
-			}
-	});
-		articles = articleList
-		// console.log(articles)
-	}
+	/** @type {import('./$types').PageData} */
+	export let data;
+	// export let lastVisible;
 
-	onMount(async () => {
-		await getArticles()
-	});
+	let articles = data ? data.articles : [];
 </script>
 
 
@@ -31,8 +15,13 @@
 	<title>Home</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
+
+<div>
 	<ListArticles articles={articles} />
-	<!-- <Counter /> -->
+	<Paginate />
+</div>
+
+
 <style>
 	section {
 		display: flex;
